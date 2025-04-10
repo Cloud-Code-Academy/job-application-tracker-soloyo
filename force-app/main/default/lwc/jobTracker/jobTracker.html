@@ -1,26 +1,23 @@
 <template>
-    <lightning-card title="Job Application Tracker" icon-name="standard:opportunity">
+    <lightning-card title="Job Quest" icon-name="standard:opportunity">
         <div class="slds-var-p-around_medium">
             <!-- Tab Navigation -->
             <lightning-tabset>
                 <!-- Dashboard Tab -->
                 <lightning-tab label="Dashboard">
-                    <c-job-dashboard></c-job-dashboard>
                 </lightning-tab>
                 
                 <!-- Job Applications List Tab -->
                 <lightning-tab label="My Applications">
-                    <c-job-applications-list></c-job-applications-list>
+                    <c-application-list></c-application-list>
                 </lightning-tab>
                 
                 <!-- New Application Tab -->
                 <lightning-tab label="New Application">
-                    <c-job-application-form></c-job-application-form>
                 </lightning-tab>
                 
                 <!-- Upcoming Interviews Tab -->
                 <lightning-tab label="Upcoming Interviews">
-                    <c-upcoming-interviews></c-upcoming-interviews>
                 </lightning-tab>
             </lightning-tabset>
         </div>
