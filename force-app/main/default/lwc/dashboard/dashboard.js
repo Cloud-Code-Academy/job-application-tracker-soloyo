@@ -14,19 +14,15 @@ export default class Dashboard extends LightningElement {
     @track upcomingInterviews = [];
     @track pendingTasks = [];
 
-    statsREsults;
-    interviewResults;
-    tasksResults;
-
     @wire(getApplicationStats)
     wiredStats({ error, data }) {
         if (data) {
-            this.appliedCount = data.appliedCount;
-            this.interviewCount = data.interviewCount;
-            this.offerCount = data.offerCount;
-            this.totalCount = data.totalCount;
-            this.upcomingInterviews = data.upcomingInterviews;
-            this.pendingTasks = data.pendingTasks;
+            this.appliedCount = data.appliedCount || this.appliedCount;
+            this.interviewCount = data.interviewCount || this.interviewCount;
+            this.offerCount = data.offerCount || this.offerCount;
+            this.totalCount = data.totalCount || this.totalCount;
+            this.upcomingInterviews = data.upcomingInterviews || this.upcomingInterviews;
+            this.pendingTasks = data.pendingTasks || this.pendingTasks;
         } else if (error) {
             console.error('Error fetching application stats:', error);
         }
@@ -82,7 +78,7 @@ export default class Dashboard extends LightningElement {
                             variant: 'success'
                         })
                     );
-                    
+
                     return refreshApex(this.wiredTasksResult);
                 })
                 .catch(error => {
