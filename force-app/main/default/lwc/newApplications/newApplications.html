@@ -2,7 +2,18 @@
     <div class="slds-var-p-around_medium">
         <lightning-card title="New Application" icon-name="standard:contract">
             <div class="slds-var-p-around_medium lgc-bg">
-                <lightning-record-edit-form object-api-name="Job_Application__c" onsuccess={handleSuccess}>
+                
+                <!-- spinner -->
+                <template lwc:if={showSpinner}>
+                    <div class="slds-is-relative">
+                        <lightning-spinner
+                            alternative-text="Loading"
+                            size="medium"
+                        ></lightning-spinner>
+                    </div>
+                </template>
+
+                <lightning-record-edit-form object-api-name="Job_Application__c" onsubmit={handleSubmit} onsuccess={handleSuccess}>
                     <lightning-messages></lightning-messages>   
 
                     <div class="slds-grid slds-gutters slds-wrap">
