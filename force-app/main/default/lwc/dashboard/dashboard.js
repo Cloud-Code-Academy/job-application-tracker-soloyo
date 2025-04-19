@@ -42,7 +42,7 @@ export default class Dashboard extends LightningElement {
                 year: "numeric",
                 month: "long",
                 day: "numeric",
-              };
+            };
 
             this.recentApplications = data.map(application => {
                 const appliedDate = new Date(application.Application_Date__c);
@@ -80,13 +80,19 @@ export default class Dashboard extends LightningElement {
     @wire(getPendingTasks)
     wiredTasks({ error, data }) {
         if (data) {
-            console.log('Pending Tasks:', data);
+            const options = {
+                weekday: "long",
+                year: "numeric",
+                month: "long",
+                day: "numeric",
+            };
+
             this.pendingTasks = data.map(task => {
                 const dueDate = task.ActivityDate ? new Date(task.ActivityDate) : null;
 
                 return {
                     ...task,
-                    formattedDueDate: dueDate ? dueDate.toLocaleDateString() : 'No due date'
+                    formattedDueDate: dueDate ? dueDate.toLocaleDateString("en-GB", options) : 'No due date'
                 };
             });
         }

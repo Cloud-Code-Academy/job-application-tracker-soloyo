@@ -78,6 +78,7 @@
                                             <lightning-button label="Edit Application" onclick={navigateToAppliction}></lightning-button>
                                         </div>
                                         <div class="slds-col slds-size_5-of-12">
+                                            <p><strong>Notes</strong></p>
                                             <p>{application.Notes__c}</p>
                                         </div>
                                     </div>
@@ -128,7 +129,7 @@
                                 <li key={task.Id} class="slds-item">
                                     <div class="slds-grid slds-gutters">
                                         <div class="slds-col slds-size_3-of-12">
-                                            <lightning-input type="checkbox" name="taskCompleted" data-id={task.Id} onchange={handleTaskCompletion}></lightning-input>
+                                            <lightning-input label="Complete task" type="checkbox" name="taskCompleted" data-id={task.Id} onchange={handleTaskCompletion}></lightning-input>
                                         </div>
                                         <div class="slds-col slds-size_4-of-12">
                                             <p><strong>{task.Subject}</strong></p>
@@ -136,6 +137,7 @@
                                             <p class="slds-text-color_weak">{task.WhatId.Name}</p>
                                         </div>
                                         <div class="slds-col slds-size_5-of-12">
+                                            <p><strong>Due Date</strong></p>
                                             <p class="slds-text-color_weak">{task.formattedDueDate}</p>
                                         </div>
                                     </div>
