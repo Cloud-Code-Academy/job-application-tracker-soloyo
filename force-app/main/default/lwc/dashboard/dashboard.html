@@ -71,11 +71,15 @@
                                         <div class="slds-col slds-size_3-of-12">
                                             <p class="slds-text-color_weak">{application.formattedDate}</p>
                                         </div>
-                                        <div class="slds-col slds-size_9-of-12">
+                                        <div class="slds-col slds-size_4-of-12">
                                             <p><strong>{application.Position__c}</strong></p>
                                             <p>{application.Company_Name__c}</p>
                                             <p>{application.formattedSalary}</p>
                                             <lightning-button label="Edit Application" onclick={navigateToAppliction}></lightning-button>
+                                        </div>
+                                        <div class="slds-col slds-size_5-of-12">
+                                            <p><strong>Notes</strong></p>
+                                            <p>{application.Notes__c}</p>
                                         </div>
                                     </div>
                                 </li>
@@ -124,15 +128,17 @@
                             <template for:each={pendingTasks} for:item="task">
                                 <li key={task.Id} class="slds-item">
                                     <div class="slds-grid slds-gutters">
-                                        <div class="slds-col slds-size_1-of-12">
-                                            <lightning-input type="checkbox" name="taskCompleted" data-id={task.Id} onchange={handleTaskCompletion}></lightning-input>
+                                        <div class="slds-col slds-size_3-of-12">
+                                            <lightning-input label="Complete task" type="checkbox" name="taskCompleted" data-id={task.Id} onchange={handleTaskCompletion}></lightning-input>
                                         </div>
-                                        <div class="slds-col slds-size_8-of-12">
+                                        <div class="slds-col slds-size_4-of-12">
                                             <p><strong>{task.Subject}</strong></p>
-                                            <p class="slds-text-color_weak">{task.What.Name}</p>
+                                            <p class="slds-text-color_weak">{task.Description}</p>
+                                            <p class="slds-text-color_weak">{task.WhatId.Name}</p>
                                         </div>
-                                        <div class="slds-col slds-size_3-of-12 slds-text-align_right">
-                                            <p class="slds-text-color_error">{task.formattedDueDate}</p>
+                                        <div class="slds-col slds-size_5-of-12">
+                                            <p><strong>Due Date</strong></p>
+                                            <p class="slds-text-color_weak">{task.formattedDueDate}</p>
                                         </div>
                                     </div>
                                 </li>

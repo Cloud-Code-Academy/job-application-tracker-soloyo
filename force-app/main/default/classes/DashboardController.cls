@@ -24,7 +24,7 @@ public with sharing class DashboardController {
 
         try {
             if (Schema.sObjectType.Job_Application__c.isAccessible()) {
-                applications = [select Id, Company_Name__c, Application_Date__c, Position__c, Salary__c from Job_Application__c where Application_Date__c = LAST_N_DAYS:7 and Status__c <> 'Saved' order by Application_Date__c desc limit 5];
+                applications = [select Id, Company_Name__c, Application_Date__c, Position__c, Salary__c, Notes__c from Job_Application__c where Application_Date__c = LAST_N_DAYS:7 and Status__c <> 'Saved' order by Application_Date__c desc limit 5];
             }
         } catch (Exception e) {
             throw new AuraHandledException(e.getMessage());
@@ -59,7 +59,7 @@ public with sharing class DashboardController {
         
         try {
             if (Schema.sObjectType.Task.isAccessible()) {
-                tasks = [select Id, Subject, ActivityDate, Status, Priority, WhatId, WhoId 
+                tasks = [select Id, Subject, ActivityDate, Status, Priority, WhatId, WhoId, Description
                             from Task 
                             where Status != 'Completed'
                             order by ActivityDate asc, Priority asc];
