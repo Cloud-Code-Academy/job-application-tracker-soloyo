@@ -1,0 +1,39 @@
+<template>
+    <div class="slds-var-p-around_medium">
+        <lightning-card title="Job Applications" icon-name="standard:record">
+            <!-- Filters -->
+            <div class="slds-var-p-around_medium">
+                <lightning-combobox
+                    label="Filter by Status"
+                    value={statusFilter}
+                    options={statusOptions}
+                    onchange={handleStatusFilterChange}>
+                </lightning-combobox>
+            </div>
+            
+            <!-- Data Table -->
+            <div class="slds-var-p-around_medium">
+                <template if:true={applications}>
+                    <lightning-datatable
+                        key-field="id"
+                        data={applications}
+                        columns={columns}
+                        onrowaction={handleRowAction}>
+                    </lightning-datatable>
+                    
+                    <div class="slds-var-p-top_small">
+                        <template if:true={applications.length}>
+                            Showing {applications.length} applications
+                        </template>
+                        <template if:false={applications.length}>
+                            No applications found. Get started by creating a new application!
+                        </template>
+                    </div>
+                </template>
+                <template if:true={loading}>
+                    <lightning-spinner alternative-text="Loading applications"></lightning-spinner>
+                </template>
+            </div>
+        </lightning-card>
+    </div>
+</template>
