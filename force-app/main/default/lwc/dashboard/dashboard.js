@@ -80,6 +80,7 @@ export default class Dashboard extends LightningElement {
     @wire(getPendingTasks)
     wiredTasks({ error, data }) {
         if (data) {
+            console.log('Pending Tasks:', data);
             this.pendingTasks = data.map(task => {
                 const dueDate = task.ActivityDate ? new Date(task.ActivityDate) : null;
 
