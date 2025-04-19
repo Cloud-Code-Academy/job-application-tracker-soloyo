@@ -1,6 +1,6 @@
 import { LightningElement, wire, track, api } from 'lwc';
 import getApplicationStats from '@salesforce/apex/DashboardController.getApplicationStats';
-import getUpcomingInterviews from '@salesforce/apex/DashboardController.getUpcomingInterviews';
+//import getUpcomingInterviews from '@salesforce/apex/DashboardController.getUpcomingInterviews';
 import getRecentApplications from '@salesforce/apex/DashboardController.getRecentApplications';
 import getPendingTasks from '@salesforce/apex/DashboardController.getPendingTasks';
 import completedTask from '@salesforce/apex/DashboardController.completedTask';
@@ -59,8 +59,9 @@ export default class Dashboard extends LightningElement {
         }
     }
 
-    @wire(getUpcomingInterviews)
+    /*@wire(getUpcomingInterviews)
     wiredInterviews({ error, data }) {
+        console.log('Upcoming Interviews:', data);
         if (data) {
             this.upcomingInterviews = data.map(interview => {
                 const startDate = new Date(interview.startDate);
@@ -74,7 +75,7 @@ export default class Dashboard extends LightningElement {
         } else if (error) {
             console.error('Error fetching upcoming interviews:', error);
         }
-    }
+    }*/
 
     @wire(getPendingTasks)
     wiredTasks({ error, data }) {
