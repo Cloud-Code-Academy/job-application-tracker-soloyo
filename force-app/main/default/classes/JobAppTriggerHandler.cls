@@ -12,4 +12,13 @@ public with sharing class JobAppTriggerHandler extends TriggerHandler {
         this.newJobAppMap = (Map<Id, Job_Application__c>) Trigger.newMap;
         this.oldJobAppMap = (Map<Id, Job_Application__c>) Trigger.oldMap;
     }
+
+    public override void afterInsert() {
+        /*
+         * Job Application Trigger
+         * When a job application is inserted, create a task related to the job application
+         */
+        jobAppHelper.createTask(newJobApp);
+        //jobAppHelper.createEvent(newJobApp);
+    }
 }
