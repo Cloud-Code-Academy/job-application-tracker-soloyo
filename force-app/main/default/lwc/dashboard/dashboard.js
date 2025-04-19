@@ -1,36 +1,67 @@
-import { LightningElement, wire, track } from 'lwc';
+import { LightningElement, wire, track, api } from 'lwc';
 import getApplicationStats from '@salesforce/apex/DashboardController.getApplicationStats';
-import getUpcomingInterviews from '@salesforce/apex/DashboardController.getUpcomingInterviews';
+//import getUpcomingInterviews from '@salesforce/apex/DashboardController.getUpcomingInterviews';
+import getRecentApplications from '@salesforce/apex/DashboardController.getRecentApplications';
 import getPendingTasks from '@salesforce/apex/DashboardController.getPendingTasks';
 import completedTask from '@salesforce/apex/DashboardController.completedTask';
 import { refreshApex } from '@salesforce/apex';
 import { ShowToastEvent } from 'lightning/platformShowToastEvent';
 
 export default class Dashboard extends LightningElement {
+    @api recordId; 
+
     @track appliedCount = 0;
     @track interviewCount = 0;
     @track offerCount = 0;
     @track totalCount = 0;
+    @track recentApplications = [];
     @track upcomingInterviews = [];
     @track pendingTasks = [];
 
+    navigateToRecord() {
+        console.log('Record ID:', this.recordId);
+    }
+
     @wire(getApplicationStats)
-    wiredStats({ error, data }) {
+    wiredApplicationStats({ error, data }) {
         if (data) {
-            this.appliedCount = data.appliedCount || this.appliedCount;
-            this.interviewCount = data.interviewCount || this.interviewCount;
-            this.offerCount = data.offerCount || this.offerCount;
-            this.totalCount = data.totalCount || this.totalCount;
-            this.upcomingInterviews = data.upcomingInterviews || this.upcomingInterviews;
-            this.pendingTasks = data.pendingTasks || this.pendingTasks;
+            this.appliedCount = data.applied || this.appliedCount;
+            this.interviewCount = data.interviews || this.interviewCount;
+            this.offerCount = data.offers || this.offerCount;
+            this.totalCount = data.total || this.totalCount;
         } else if (error) {
             console.error('Error fetching application stats:', error);
         }
     }
 
-    @wire(getUpcomingInterviews)
+    @wire(getRecentApplications)
+    wiredRecentApplications({ error, data }) {
+        if (data) {
+            const options = {
+                weekday: "long",
+                year: "numeric",
+                month: "long",
+                day: "numeric",
+              };
+
+            this.recentApplications = data.map(application => {
+                const appliedDate = new Date(application.Application_Date__c);
+                const applicationSalary = new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(application.Salary__c);
+
+                return {
+                    ...application,
+                    formattedDate: appliedDate.toLocaleDateString("en-GB", options),
+                    formattedSalary: applicationSalary
+                };
+            });
+        } else if (error) {
+            console.error('Error fetching recent applications:', error);
+        }
+    }
+
+    /*@wire(getUpcomingInterviews)
     wiredInterviews({ error, data }) {
-        this.interviewResults = data;
+        console.log('Upcoming Interviews:', data);
         if (data) {
             this.upcomingInterviews = data.map(interview => {
                 const startDate = new Date(interview.startDate);
@@ -44,11 +75,10 @@ export default class Dashboard extends LightningElement {
         } else if (error) {
             console.error('Error fetching upcoming interviews:', error);
         }
-    }
+    }*/
 
     @wire(getPendingTasks)
     wiredTasks({ error, data }) {
-        this.tasksResults = data;
         if (data) {
             this.pendingTasks = data.map(task => {
                 const dueDate = task.ActivityDate ? new Date(task.ActivityDate) : null;
