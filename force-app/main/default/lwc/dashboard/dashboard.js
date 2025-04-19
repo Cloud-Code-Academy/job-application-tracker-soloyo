@@ -1,4 +1,4 @@
-import { LightningElement, wire, track } from 'lwc';
+import { LightningElement, wire, track, api } from 'lwc';
 import getApplicationStats from '@salesforce/apex/DashboardController.getApplicationStats';
 import getUpcomingInterviews from '@salesforce/apex/DashboardController.getUpcomingInterviews';
 import getRecentApplications from '@salesforce/apex/DashboardController.getRecentApplications';
@@ -8,6 +8,8 @@ import { refreshApex } from '@salesforce/apex';
 import { ShowToastEvent } from 'lightning/platformShowToastEvent';
 
 export default class Dashboard extends LightningElement {
+    @api recordId; 
+
     @track appliedCount = 0;
     @track interviewCount = 0;
     @track offerCount = 0;
@@ -15,6 +17,10 @@ export default class Dashboard extends LightningElement {
     @track recentApplications = [];
     @track upcomingInterviews = [];
     @track pendingTasks = [];
+
+    navigateToRecord() {
+        console.log('Record ID:', this.recordId);
+    }
 
     @wire(getApplicationStats)
     wiredApplicationStats({ error, data }) {
