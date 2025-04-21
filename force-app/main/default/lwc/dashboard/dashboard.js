@@ -1,13 +1,16 @@
 import { LightningElement, wire, track, api } from 'lwc';
+
 import getApplicationStats from '@salesforce/apex/DashboardController.getApplicationStats';
 //import getUpcomingInterviews from '@salesforce/apex/DashboardController.getUpcomingInterviews';
 import getRecentApplications from '@salesforce/apex/DashboardController.getRecentApplications';
 import getPendingTasks from '@salesforce/apex/DashboardController.getPendingTasks';
 import completedTask from '@salesforce/apex/DashboardController.completedTask';
+
+import { NavigationMixin } from 'lightning/navigation';
 import { refreshApex } from '@salesforce/apex';
 import { ShowToastEvent } from 'lightning/platformShowToastEvent';
 
-export default class Dashboard extends LightningElement {
+export default class Dashboard extends NavigationMixin(LightningElement) {
     @api recordId; 
 
     @track appliedCount = 0;
@@ -17,10 +20,6 @@ export default class Dashboard extends LightningElement {
     @track recentApplications = [];
     @track upcomingInterviews = [];
     @track pendingTasks = [];
-
-    navigateToRecord() {
-        console.log('Record ID:', this.recordId);
-    }
 
     @wire(getApplicationStats)
     wiredApplicationStats({ error, data }) {
@@ -99,6 +98,27 @@ export default class Dashboard extends LightningElement {
         else if (error) {
             console.error('Error fetching pending tasks:', error);
         }
+    }
+
+    navigateToEditScreen(e) {
+        sessionStorage.setItem('lastViewedDashboardTab', 'dashboard');
+        const rID = e.target.value;
+
+        const componentDefinition = {
+            componentDef: 'c:editForm',
+            attributes: {
+                recordId: rID
+            }
+        }
+
+        const encodedComponentDef = btoa(JSON.stringify(componentDefinition));
+
+        this[NavigationMixin.Navigate]({
+            type: 'standard__webPage',
+            attributes: {
+                url: '/lightning/n/Job_Tracker#' + encodedComponentDef
+            }
+        });
     }
 
     handleTaskCompletion(event) {
