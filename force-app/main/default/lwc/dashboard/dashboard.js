@@ -101,7 +101,6 @@ export default class Dashboard extends NavigationMixin(LightningElement) {
     }
 
     navigateToEditScreen(e) {
-        sessionStorage.setItem('lastViewedDashboardTab', 'dashboard');
         const rID = e.target.value;
 
         const componentDefinition = {

@@ -1,6 +1,6 @@
 <template>
     <div class="slds-var-p-around_medium">
-        <lightning-card title="Edit Application" icon-name="standard:contract">
+        <lightning-card title="Job Quest" icon-name="standard:opportunity">
             <div class="slds-var-p-around_medium lgc-bg">
                 
                 <!-- spinner -->
@@ -14,13 +14,18 @@
                 </template>
 
                 <lightning-record-edit-form record-id={recordId} object-api-name="Job_Application__c" onsubmit={handleSubmit} onsuccess={handleSuccess}>
+                    <div class="">
+                        <h3 class="slds-text-heading_medium slds-m-bottom_small">Edit Application</h3>
+                        <p class="slds-text-body_regular slds-m-bottom_small">Edit the details of your job application below.</p>
+                    </div>
+                    
                     <lightning-messages></lightning-messages>   
 
                     <div class="slds-grid slds-gutters slds-wrap">
-                        <div class="slds-col slds-size_1-of-2">
+                        <div class="slds-col slds-size_1-of-1">
                             <lightning-input-field field-name="Position__c"></lightning-input-field>
                         </div>
-                        <div class="slds-col slds-size_1-of-2">
+                        <div class="slds-col slds-size_1-of-1">
                             <lightning-input-field field-name="Interview_Date__c"></lightning-input-field>
                         </div>
 
@@ -28,8 +33,7 @@
                             <lightning-input-field field-name="Company_Name__c"></lightning-input-field>
                         </div>
                         <div class="slds-col slds-size_1-of-1 slds-medium-size_1-of-2">
-                            <lightning-input-field field-name="Location__c"></lightning-input-field>
-                            
+                            <lightning-input-field field-name="Location__c"></lightning-input-field> 
                         </div>
 
                         <div class="slds-col slds-size_1-of-1 slds-medium-size_1-of-2">

@@ -56,11 +56,15 @@ export default class EditForm extends NavigationMixin(LightningElement) {
 
     navigateBackToDashboard() {
         this[NavigationMixin.Navigate]({
-            type: 'standard__navItemPage',
+            type: 'standard__webPage',
             attributes: {
-                apiName: 'Dashboard'  // Replace with your actual tab API name
+                url: '/lightning/n/Job_Tracker'
             }
         });
+    }
+
+    handleCancel() {
+        this.navigateBackToDashboard();
     }
 
     showToast(title, message, variant) {
