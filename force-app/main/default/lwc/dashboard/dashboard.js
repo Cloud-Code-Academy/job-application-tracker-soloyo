@@ -1,7 +1,7 @@
 import { LightningElement, wire, track, api } from 'lwc';
 
 import getApplicationStats from '@salesforce/apex/DashboardController.getApplicationStats';
-//import getUpcomingInterviews from '@salesforce/apex/DashboardController.getUpcomingInterviews';
+import getUpcomingInterviews from '@salesforce/apex/DashboardController.getUpcomingInterviews';
 import getRecentApplications from '@salesforce/apex/DashboardController.getRecentApplications';
 import getPendingTasks from '@salesforce/apex/DashboardController.getPendingTasks';
 import completedTask from '@salesforce/apex/DashboardController.completedTask';
@@ -58,23 +58,42 @@ export default class Dashboard extends NavigationMixin(LightningElement) {
         }
     }
 
-    /*@wire(getUpcomingInterviews)
+    @wire(getUpcomingInterviews)
     wiredInterviews({ error, data }) {
         console.log('Upcoming Interviews:', data);
         if (data) {
+            const options = {
+                weekday: "long",
+                year: "numeric",
+                month: "long",
+                day: "numeric"
+            };
+
             this.upcomingInterviews = data.map(interview => {
-                const startDate = new Date(interview.startDate);
+                const startDate = new Date(interview.StartDateTime);
+                const endDate = new Date(interview.EndDateTime);
 
                 return {
                     ...interview,
-                    formattedDate: startDate.toLocaleDateString(),
-                    formattedTime: startDate.toLocateTimeString([], { hour: '2-digit', minute: '2-digit' })
+                    formattedDate: startDate.toLocaleDateString("en-GB", options),
+                    formattedStartTime: Intl.DateTimeFormat('en-US', {
+                        hour: '2-digit',
+                        minute: '2-digit',
+                        hour12: true,
+                        timeZone: 'UTC',
+                    }).format(startDate),
+                    formattedEndTime: Intl.DateTimeFormat('en-US', {
+                        hour: '2-digit',
+                        minute: '2-digit',
+                        hour12: true,
+                        timeZone: 'UTC',
+                    }).format(endDate)
                 };
             });
         } else if (error) {
             console.error('Error fetching upcoming interviews:', error);
         }
-    }*/
+    }
 
     @wire(getPendingTasks)
     wiredTasks({ error, data }) {
