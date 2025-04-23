@@ -40,30 +40,45 @@ public with sharing class JobAppHelper {
         
         if (!tasksToInsert.isEmpty()) {
             if (Schema.sObjectType.Task.isCreateable()) {
-                insert tasksToInsert;
+                try {
+                    insert tasksToInsert;
+                } catch (Exception e) {
+                    System.debug('Error creating tasks: ' + e.getMessage()); 
+                }
             } else {
-                // Handle insufficient permissions, e.g., log an error or throw an exception
                 System.debug('User does not have permission to create Task records.');
             }
         }
     }
 
-    /*
-    public void createEvent(List<Job_Application__c> jobApps) {
+    public void createEvent(List<Job_Application__c> newJobApps) {
         List<Event> eventsToInsert = new List<Event>();
+
+        // need to add a check to see if the date/time was added or updated
+        // also needto change the status if it has been done so already
         
-        for (Job_Application__c jobApp : jobApps) {
-            Event event = new Event();
-            event.Subject = 'Job Application Follow up';
-            event.StartDateTime = System.now().addDays(7);
-            event.EndDateTime = System.now().addDays(7).addHours(1);
-            event.WhatId = jobApp.Id;
-            eventsToInsert.add(event);
+        for (Job_Application__c jobApp : newJobApps) { 
+            if (jobApp.Interview_Date__c != null) {
+                Event event = new Event();
+                event.Subject = 'Interview with ' + jobApp.Company_Name__c + ' for ' + jobApp.Position__c;
+                event.StartDateTime = jobApp.Interview_Date__c;
+                event.EndDateTime = jobApp.Interview_Date__c.addHours(1);
+                event.WhatId = jobApp.Id;
+                event.OwnerId = jobApp.OwnerId;
+                eventsToInsert.add(event);
+            }
         }
         
         if (!eventsToInsert.isEmpty()) {
-            insert eventsToInsert;
+            if (Schema.sObjectType.Event.isCreateable()) {
+                try {
+                    insert eventsToInsert;
+                } catch (Exception e) {
+                    System.debug('Error creating events: ' + e.getMessage());
+                }
+            } else {
+                System.debug('User does not have permission to create Event records.');
+            }
         }
     }
-    */
 }

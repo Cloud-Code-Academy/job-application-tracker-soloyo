@@ -12,9 +12,7 @@ export default class NewApplications extends LightningElement {
         const fields = e.detail.fields;
 
         const currentDate = new Date();
-        const currentDateFollowUp = currentDate.setDate(currentDate.getDate() + 2);
-
-        console.log("Current Date Follow Up:", currentDateFollowUp);
+        //const currentDateFollowUp = currentDate.setDate(currentDate.getDate() + 2);
 
         const formattedDate = currentDate.toISOString().split('T')[0]; 
         //const formattedFollowUpDate = currentDateFollowUp.toISOString().split('T')[0];
