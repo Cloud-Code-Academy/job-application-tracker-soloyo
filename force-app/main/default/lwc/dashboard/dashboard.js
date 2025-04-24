@@ -129,6 +129,14 @@ export default class Dashboard extends NavigationMixin(LightningElement) {
         const now = new Date();
         const today = new Date(now.getFullYear(), now.getMonth(), now.getDate()).getTime();
 
+        // date options for formatting
+        const options = {
+            weekday: "long",
+            year: "numeric",
+            month: "long",
+            day: "numeric"
+        };
+
         let jobApi = "https://jooble.org/api/";
         let jobApiKey = "f1b033ba-59d0-4f64-b46b-802ac1e0c85b";
         let params = {
@@ -156,14 +164,15 @@ export default class Dashboard extends NavigationMixin(LightningElement) {
                 })
                 .then(data => {
                     this.jobAlerts = data.jobs.map(job => {
-                        //const jobDate = new Date(job.date);
+                        const jobDate = new Date(job.updated);
                         
                         return {
                             ...job,
-                            formattedSalary: new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(job.salary)
+                            formattedDate: jobDate.toLocaleDateString("en-GB", options),
+                            formattedSalary: job.salary ? new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(job.salary) : 'Not specified'
                         };
                     });
-                     console.log('API call successful:', data);
+                    
                     localStorage.setItem('lastAPICall', now.getTime());
                     localStorage.setItem('lastAPICallData', JSON.stringify(data));
                 })
@@ -174,9 +183,12 @@ export default class Dashboard extends NavigationMixin(LightningElement) {
             if (lastCallData) {
                 const data = JSON.parse(lastCallData);
                 this.jobAlerts = data.jobs.map(job => {
+                    const jobDate = new Date(job.updated);
+
                     return {
                         ...job,
-                        formattedSalary: new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(job.salary)
+                        formattedDate: jobDate.toLocaleDateString("en-GB", options),
+                        formattedSalary: job.salary ? new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(job.salary) : 'Not specified'
                     };
                 });
             }
@@ -187,8 +199,25 @@ export default class Dashboard extends NavigationMixin(LightningElement) {
         this.jobAPICall();
     }
 
-    navigateToAddScreen() {
-        console.log('Navigating to Add screen...');
+    navigateToAddScreen(e) {
+        const jobToAdd = e.target.value; 
+        console.log('jobToAdd:', jobToAdd); // Log the value of jobToAdd
+
+        const componentDefinition = {
+            componentDef: 'c:addJobForm',
+            attributes: {
+                jobToAdd: jobToAdd
+            }
+        }
+
+        const encodedComponentDef = btoa(JSON.stringify(componentDefinition));
+
+        this[NavigationMixin.Navigate]({
+            type: 'standard__webPage',
+            attributes: {
+                url: '/lightning/n/Job_Tracker#' + encodedComponentDef
+            }
+        });
     }
 
     navigateToEditScreen(e) {

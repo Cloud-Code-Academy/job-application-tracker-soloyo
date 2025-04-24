@@ -103,12 +103,14 @@
                                 <li key={alert.id} class="slds-item">
                                     <div class="slds-grid slds-grid_align-spread">
                                         <div class="slds-col slds-size_3-of-12">
-                                            <p class="slds-text-color_weak">updated date from API call</p>
+                                            <p class="slds-text-color_weak">{alert.formattedDate}</p>
+                                            <p class="slds-text-color_weak">{alert.formattedSalary}</p>
                                         </div>
                                         <div class="slds-col slds-size_9-of-12">
                                             <p><strong>{alert.title}</strong></p>
                                             <p>{alert.company}</p>
                                             <p>{alert.salary}</p>
+                                            <p>{alert.location}</p>
                                             <lightning-button label="Add Job" onclick={navigateToAddScreen} value={alert}></lightning-button>
                                         </div>
                                     </div>
