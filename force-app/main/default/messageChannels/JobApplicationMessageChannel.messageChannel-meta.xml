@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<LightningMessageChannel xmlns="http://soap.sforce.com/2006/04/metadata/lightningMessageChannel">
+    <masterLabel>JobApplicationMessageChannel</masterLabel>
+    <isExposed>true</isExposed>
+    <description>Message Channel for Job Application data transfer</description>
+    <lightningMessageFields>
+        <fieldName>jobData</fieldName>
+        <description>This field contains job application data</description>
+    </lightningMessageFields>
+</LightningMessageChannel>

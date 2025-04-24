@@ -5,13 +5,15 @@ import getUpcomingInterviews from '@salesforce/apex/DashboardController.getUpcom
 import getRecentApplications from '@salesforce/apex/DashboardController.getRecentApplications';
 import getPendingTasks from '@salesforce/apex/DashboardController.getPendingTasks';
 import completedTask from '@salesforce/apex/DashboardController.completedTask';
+import JOB_APPLICATION_CHANNEL from '@salesforce/messageChannel/JobApplicationMessageChannel__c';
 
 import { NavigationMixin } from 'lightning/navigation';
 import { refreshApex } from '@salesforce/apex';
 import { ShowToastEvent } from 'lightning/platformShowToastEvent';
+import { publish } from 'lightning/messageService';
 
 export default class Dashboard extends NavigationMixin(LightningElement) {
-    @api recordId; 
+    @api recordId;
 
     @track appliedCount = 0;
     @track interviewCount = 0;
@@ -178,8 +180,6 @@ export default class Dashboard extends NavigationMixin(LightningElement) {
                 })
                 .catch(error => console.error('API call failed:', error));
         } else {
-            console.log('API already called today.');
-
             if (lastCallData) {
                 const data = JSON.parse(lastCallData);
                 this.jobAlerts = data.jobs.map(job => {
@@ -199,16 +199,16 @@ export default class Dashboard extends NavigationMixin(LightningElement) {
         this.jobAPICall();
     }
 
-    navigateToAddScreen(e) {
-        const jobToAdd = e.target.value; 
-        console.log('jobToAdd:', jobToAdd); // Log the value of jobToAdd
+    navigateToAddScreen() {
+        const payload = {
+            jobData: this.jobAlerts
+        };
+
+        publish(this.messageContext, JOB_APPLICATION_CHANNEL, payload);
 
         const componentDefinition = {
-            componentDef: 'c:addJobForm',
-            attributes: {
-                jobToAdd: jobToAdd
-            }
-        }
+            componentDef: 'c:addJobForm'
+        };
 
         const encodedComponentDef = btoa(JSON.stringify(componentDefinition));
 
