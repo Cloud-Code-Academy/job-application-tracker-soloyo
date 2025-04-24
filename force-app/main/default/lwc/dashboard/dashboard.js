@@ -20,9 +20,13 @@ export default class Dashboard extends NavigationMixin(LightningElement) {
     @track recentApplications = [];
     @track upcomingInterviews = [];
     @track pendingTasks = [];
+    @track jobAlerts = [];
+    @track wiredTasksResult; // Store the result of the wired method for refreshApex
+    @track wiredApplicationStatsResult; // Store the result of the wired method for refreshApex
 
     @wire(getApplicationStats)
     wiredApplicationStats({ error, data }) {
+        this.wiredApplicationStatsResult = data; // Store the result for refreshApex
         if (data) {
             this.appliedCount = data.applied || this.appliedCount;
             this.interviewCount = data.interviews || this.interviewCount;
@@ -60,7 +64,6 @@ export default class Dashboard extends NavigationMixin(LightningElement) {
 
     @wire(getUpcomingInterviews)
     wiredInterviews({ error, data }) {
-        console.log('Upcoming Interviews:', data);
         if (data) {
             const options = {
                 weekday: "long",
@@ -95,8 +98,9 @@ export default class Dashboard extends NavigationMixin(LightningElement) {
         }
     }
 
-    @wire(getPendingTasks)
+    @wire(getPendingTasks)    
     wiredTasks({ error, data }) {
+        this.wiredTasksResult = data; // Store the result for refreshApex
         if (data) {
             const options = {
                 weekday: "long",
@@ -117,6 +121,103 @@ export default class Dashboard extends NavigationMixin(LightningElement) {
         else if (error) {
             console.error('Error fetching pending tasks:', error);
         }
+    }
+
+    jobAPICall() {
+        const lastCallTS = localStorage.getItem('lastAPICall');
+        const lastCallData = localStorage.getItem('lastAPICallData');
+        const now = new Date();
+        const today = new Date(now.getFullYear(), now.getMonth(), now.getDate()).getTime();
+
+        // date options for formatting
+        const options = {
+            weekday: "long",
+            year: "numeric",
+            month: "long",
+            day: "numeric"
+        };
+
+        let jobApi = "https://jooble.org/api/";
+        let jobApiKey = "f1b033ba-59d0-4f64-b46b-802ac1e0c85b";
+        let params = {
+            keywords: "salesforce developer",
+            location: "remote",
+            resultonpage: "5"
+        };
+        let myHeaders = new Headers();
+
+        myHeaders.append("Content-Type", "application/json");
+
+        let requestOptions = {
+            method: 'POST',
+            headers: myHeaders,
+            body: JSON.stringify(params)
+        };
+
+        if (!lastCallTS || new Date(parseInt(lastCallTS, 10)) < today) {
+            fetch(jobApi + jobApiKey, requestOptions)
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error(`HTTP error! status: ${response.status}`);
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    this.jobAlerts = data.jobs.map(job => {
+                        const jobDate = new Date(job.updated);
+                        
+                        return {
+                            ...job,
+                            formattedDate: jobDate.toLocaleDateString("en-GB", options),
+                            formattedSalary: job.salary ? new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(job.salary) : 'Not specified'
+                        };
+                    });
+                    
+                    localStorage.setItem('lastAPICall', now.getTime());
+                    localStorage.setItem('lastAPICallData', JSON.stringify(data));
+                })
+                .catch(error => console.error('API call failed:', error));
+        } else {
+            console.log('API already called today.');
+
+            if (lastCallData) {
+                const data = JSON.parse(lastCallData);
+                this.jobAlerts = data.jobs.map(job => {
+                    const jobDate = new Date(job.updated);
+
+                    return {
+                        ...job,
+                        formattedDate: jobDate.toLocaleDateString("en-GB", options),
+                        formattedSalary: job.salary ? new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(job.salary) : 'Not specified'
+                    };
+                });
+            }
+        }
+    }
+
+    connectedCallback() {
+        this.jobAPICall();
+    }
+
+    navigateToAddScreen(e) {
+        const jobToAdd = e.target.value; 
+        console.log('jobToAdd:', jobToAdd); // Log the value of jobToAdd
+
+        const componentDefinition = {
+            componentDef: 'c:addJobForm',
+            attributes: {
+                jobToAdd: jobToAdd
+            }
+        }
+
+        const encodedComponentDef = btoa(JSON.stringify(componentDefinition));
+
+        this[NavigationMixin.Navigate]({
+            type: 'standard__webPage',
+            attributes: {
+                url: '/lightning/n/Job_Tracker#' + encodedComponentDef
+            }
+        });
     }
 
     navigateToEditScreen(e) {
