@@ -11,7 +11,7 @@ import { refreshApex } from '@salesforce/apex';
 import { ShowToastEvent } from 'lightning/platformShowToastEvent';
 
 export default class Dashboard extends NavigationMixin(LightningElement) {
-    @api recordId; 
+    @api recordId;
 
     @track appliedCount = 0;
     @track interviewCount = 0;
@@ -178,8 +178,6 @@ export default class Dashboard extends NavigationMixin(LightningElement) {
                 })
                 .catch(error => console.error('API call failed:', error));
         } else {
-            console.log('API already called today.');
-
             if (lastCallData) {
                 const data = JSON.parse(lastCallData);
                 this.jobAlerts = data.jobs.map(job => {
@@ -196,26 +194,26 @@ export default class Dashboard extends NavigationMixin(LightningElement) {
     }
 
     connectedCallback() {
+        sessionStorage.removeItem('selectedJobData');
         this.jobAPICall();
     }
 
     navigateToAddScreen(e) {
-        const jobToAdd = e.target.value; 
-        console.log('jobToAdd:', jobToAdd); // Log the value of jobToAdd
+        const jobIndex = e.currentTarget.dataset.jobIndex;
+        const selectedJob = this.jobAlerts[jobIndex];
 
-        const componentDefinition = {
-            componentDef: 'c:addJobForm',
-            attributes: {
-                jobToAdd: jobToAdd
-            }
+        sessionStorage.setItem('selectedJobData', JSON.stringify(selectedJob));
+
+        const componentAddDefinition = {
+            componentDef: 'c:addJobForm'
         }
 
-        const encodedComponentDef = btoa(JSON.stringify(componentDefinition));
+        const encodedAddComponentDef = btoa(JSON.stringify(componentAddDefinition));
 
         this[NavigationMixin.Navigate]({
             type: 'standard__webPage',
             attributes: {
-                url: '/lightning/n/Job_Tracker#' + encodedComponentDef
+                url: '/one/one.app#' + encodedAddComponentDef
             }
         });
     }
@@ -235,7 +233,7 @@ export default class Dashboard extends NavigationMixin(LightningElement) {
         this[NavigationMixin.Navigate]({
             type: 'standard__webPage',
             attributes: {
-                url: '/lightning/n/Job_Tracker#' + encodedComponentDef
+                url: '/one/one.app#' + encodedComponentDef
             }
         });
     }

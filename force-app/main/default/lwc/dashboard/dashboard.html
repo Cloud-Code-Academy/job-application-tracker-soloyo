@@ -99,7 +99,7 @@
                 <div class="slds-var-p-around_medium">
                     <template lwc:if={jobAlerts.length}>
                         <ul class="slds-has-dividers_bottom-space">
-                            <template for:each={jobAlerts} for:item="alert">
+                            <template for:each={jobAlerts} for:item="alert" for:index="index">
                                 <li key={alert.id} class="slds-item">
                                     <div class="slds-grid slds-grid_align-spread">
                                         <div class="slds-col slds-size_3-of-12">
@@ -111,7 +111,7 @@
                                             <p>{alert.company}</p>
                                             <p>{alert.salary}</p>
                                             <p>{alert.location}</p>
-                                            <lightning-button label="Add Job" onclick={navigateToAddScreen} value={alert}></lightning-button>
+                                            <lightning-button label="Add Job" data-job-index={index} onclick={navigateToAddScreen}></lightning-button>
                                         </div>
                                     </div>
                                 </li>
