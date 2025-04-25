@@ -1,24 +1,14 @@
 <template>
     <div class="slds-var-p-around_medium">
-        <lightning-card title="Job Applications" icon-name="standard:record">
-            <!-- Filters -->
+        <lightning-card title="Jobs List" icon-name="standard:record">
             <div class="slds-var-p-around_medium">
-                <lightning-combobox
-                    label="Filter by Status"
-                    value={statusFilter}
-                    options={statusOptions}
-                    onchange={handleStatusFilterChange}>
-                </lightning-combobox>
-            </div>
-            
-            <!-- Data Table -->
-            <div class="slds-var-p-around_medium">
-                <template lwc:if={allJobs}>
+                <template lwc:if={allJobs.length}>
                     <lightning-datatable
-                        key-field="id"
-                        data={jobs}
+                        key-field="Id"
+                        data={allJobs}
                         columns={columns}
-                        onrowaction={handleRowAction}>
+                        onsave={handleSave}
+                        draft-values={draftValues}>
                     </lightning-datatable>
                     
                     <div class="slds-var-p-top_small">
