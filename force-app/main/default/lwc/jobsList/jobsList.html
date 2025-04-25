@@ -1,3 +1,39 @@
 <template>
-    
+    <div class="slds-var-p-around_medium">
+        <lightning-card title="Job Applications" icon-name="standard:record">
+            <!-- Filters -->
+            <div class="slds-var-p-around_medium">
+                <lightning-combobox
+                    label="Filter by Status"
+                    value={statusFilter}
+                    options={statusOptions}
+                    onchange={handleStatusFilterChange}>
+                </lightning-combobox>
+            </div>
+            
+            <!-- Data Table -->
+            <div class="slds-var-p-around_medium">
+                <template lwc:if={allJobs}>
+                    <lightning-datatable
+                        key-field="id"
+                        data={jobs}
+                        columns={columns}
+                        onrowaction={handleRowAction}>
+                    </lightning-datatable>
+                    
+                    <div class="slds-var-p-top_small">
+                        <template lwc:if={allJobs.length}>
+                            Showing {allJobs.length} jobs
+                        </template>
+                        <template lwc:else>
+                            No jobs found. Get started by creating a new application!
+                        </template>
+                    </div>
+                </template>
+                <template lwc:if={loading}>
+                    <lightning-spinner alternative-text="Loading jobs"></lightning-spinner>
+                </template>
+            </div>
+        </lightning-card>
+    </div>
 </template>

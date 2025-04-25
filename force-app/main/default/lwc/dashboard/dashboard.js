@@ -17,16 +17,21 @@ export default class Dashboard extends NavigationMixin(LightningElement) {
     @track interviewCount = 0;
     @track offerCount = 0;
     @track totalCount = 0;
+    @track jobsList = [];
     @track recentApplications = [];
     @track upcomingInterviews = [];
     @track pendingTasks = [];
     @track jobAlerts = [];
-    @track wiredTasksResult; // Store the result of the wired method for refreshApex
-    @track wiredApplicationStatsResult; // Store the result of the wired method for refreshApex
+
+     // store the result of the wired method for refreshApex
+    @track wiredTasksResult;
+    @track wiredApplicationStatsResult;
+    @track wiredInterviewsResult;
 
     @wire(getApplicationStats)
     wiredApplicationStats({ error, data }) {
-        this.wiredApplicationStatsResult = data; // Store the result for refreshApex
+        this.wiredApplicationStatsResult = data;
+
         if (data) {
             this.appliedCount = data.applied || this.appliedCount;
             this.interviewCount = data.interviews || this.interviewCount;
@@ -39,6 +44,8 @@ export default class Dashboard extends NavigationMixin(LightningElement) {
 
     @wire(getRecentApplications)
     wiredRecentApplications({ error, data }) {
+        this.wiredApplicationStatsResult = data;
+
         if (data) {
             const options = {
                 weekday: "long",
@@ -64,6 +71,8 @@ export default class Dashboard extends NavigationMixin(LightningElement) {
 
     @wire(getUpcomingInterviews)
     wiredInterviews({ error, data }) {
+        this.wiredInterviewsResult = data;
+
         if (data) {
             const options = {
                 weekday: "long",
@@ -100,7 +109,8 @@ export default class Dashboard extends NavigationMixin(LightningElement) {
 
     @wire(getPendingTasks)    
     wiredTasks({ error, data }) {
-        this.wiredTasksResult = data; // Store the result for refreshApex
+        this.wiredTasksResult = data; 
+        
         if (data) {
             const options = {
                 weekday: "long",
@@ -194,6 +204,9 @@ export default class Dashboard extends NavigationMixin(LightningElement) {
     }
 
     connectedCallback() {
+        refreshApex(this.wiredInterviewsResult);
+        refreshApex(this.wiredApplicationStatsResult);
+
         sessionStorage.removeItem('selectedJobData');
         this.jobAPICall();
     }
