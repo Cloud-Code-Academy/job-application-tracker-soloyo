@@ -5,12 +5,10 @@ import getUpcomingInterviews from '@salesforce/apex/DashboardController.getUpcom
 import getRecentApplications from '@salesforce/apex/DashboardController.getRecentApplications';
 import getPendingTasks from '@salesforce/apex/DashboardController.getPendingTasks';
 import completedTask from '@salesforce/apex/DashboardController.completedTask';
-import JOB_APPLICATION_CHANNEL from '@salesforce/messageChannel/JobApplicationMessageChannel__c';
 
 import { NavigationMixin } from 'lightning/navigation';
 import { refreshApex } from '@salesforce/apex';
 import { ShowToastEvent } from 'lightning/platformShowToastEvent';
-import { publish } from 'lightning/messageService';
 
 export default class Dashboard extends NavigationMixin(LightningElement) {
     @api recordId;
@@ -196,26 +194,26 @@ export default class Dashboard extends NavigationMixin(LightningElement) {
     }
 
     connectedCallback() {
+        sessionStorage.removeItem('selectedJobData');
         this.jobAPICall();
     }
 
-    navigateToAddScreen() {
-        const payload = {
-            jobData: this.jobAlerts
-        };
+    navigateToAddScreen(e) {
+        const jobIndex = e.currentTarget.dataset.jobIndex;
+        const selectedJob = this.jobAlerts[jobIndex];
 
-        publish(this.messageContext, JOB_APPLICATION_CHANNEL, payload);
+        sessionStorage.setItem('selectedJobData', JSON.stringify(selectedJob));
 
-        const componentDefinition = {
+        const componentAddDefinition = {
             componentDef: 'c:addJobForm'
-        };
+        }
 
-        const encodedComponentDef = btoa(JSON.stringify(componentDefinition));
+        const encodedAddComponentDef = btoa(JSON.stringify(componentAddDefinition));
 
         this[NavigationMixin.Navigate]({
             type: 'standard__webPage',
             attributes: {
-                url: '/lightning/n/Job_Tracker#' + encodedComponentDef
+                url: '/one/one.app#' + encodedAddComponentDef
             }
         });
     }
@@ -235,7 +233,7 @@ export default class Dashboard extends NavigationMixin(LightningElement) {
         this[NavigationMixin.Navigate]({
             type: 'standard__webPage',
             attributes: {
-                url: '/lightning/n/Job_Tracker#' + encodedComponentDef
+                url: '/one/one.app#' + encodedComponentDef
             }
         });
     }
