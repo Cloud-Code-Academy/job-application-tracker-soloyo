@@ -207,6 +207,7 @@ export default class Dashboard extends NavigationMixin(LightningElement) {
     connectedCallback() {
         refreshApex(this.wiredInterviewsResult);
         refreshApex(this.wiredApplicationStatsResult);
+        refreshApex(this.wiredTasksResult);
 
         sessionStorage.removeItem('selectedJobData');
         this.jobAPICall();
