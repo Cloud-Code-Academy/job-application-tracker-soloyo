@@ -17,16 +17,21 @@ export default class Dashboard extends NavigationMixin(LightningElement) {
     @track interviewCount = 0;
     @track offerCount = 0;
     @track totalCount = 0;
+    @track jobsList = [];
     @track recentApplications = [];
     @track upcomingInterviews = [];
     @track pendingTasks = [];
     @track jobAlerts = [];
-    @track wiredTasksResult; // Store the result of the wired method for refreshApex
-    @track wiredApplicationStatsResult; // Store the result of the wired method for refreshApex
+
+     // store the result of the wired method for refreshApex
+    @track wiredTasksResult;
+    @track wiredApplicationStatsResult;
+    @track wiredInterviewsResult;
 
     @wire(getApplicationStats)
     wiredApplicationStats({ error, data }) {
-        this.wiredApplicationStatsResult = data; // Store the result for refreshApex
+        this.wiredApplicationStatsResult = data;
+
         if (data) {
             this.appliedCount = data.applied || this.appliedCount;
             this.interviewCount = data.interviews || this.interviewCount;
@@ -39,6 +44,8 @@ export default class Dashboard extends NavigationMixin(LightningElement) {
 
     @wire(getRecentApplications)
     wiredRecentApplications({ error, data }) {
+        this.wiredApplicationStatsResult = data;
+
         if (data) {
             const options = {
                 weekday: "long",
@@ -64,6 +71,8 @@ export default class Dashboard extends NavigationMixin(LightningElement) {
 
     @wire(getUpcomingInterviews)
     wiredInterviews({ error, data }) {
+        this.wiredInterviewsResult = data;
+
         if (data) {
             const options = {
                 weekday: "long",
@@ -100,7 +109,8 @@ export default class Dashboard extends NavigationMixin(LightningElement) {
 
     @wire(getPendingTasks)    
     wiredTasks({ error, data }) {
-        this.wiredTasksResult = data; // Store the result for refreshApex
+        this.wiredTasksResult = data; 
+        
         if (data) {
             const options = {
                 weekday: "long",
@@ -137,6 +147,7 @@ export default class Dashboard extends NavigationMixin(LightningElement) {
             day: "numeric"
         };
 
+        // this should be moved but I honestly don't know how to do that properly in Salesforce
         let jobApi = "https://jooble.org/api/";
         let jobApiKey = "f1b033ba-59d0-4f64-b46b-802ac1e0c85b";
         let params = {
@@ -169,7 +180,7 @@ export default class Dashboard extends NavigationMixin(LightningElement) {
                         return {
                             ...job,
                             formattedDate: jobDate.toLocaleDateString("en-GB", options),
-                            formattedSalary: job.salary ? new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(job.salary) : 'Not specified'
+                            formattedSalary: job.salary ? new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(job.salary) : 'No salary specified'
                         };
                     });
                     
@@ -194,6 +205,10 @@ export default class Dashboard extends NavigationMixin(LightningElement) {
     }
 
     connectedCallback() {
+        refreshApex(this.wiredInterviewsResult);
+        refreshApex(this.wiredApplicationStatsResult);
+        refreshApex(this.wiredTasksResult);
+
         sessionStorage.removeItem('selectedJobData');
         this.jobAPICall();
     }
