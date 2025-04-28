@@ -147,6 +147,7 @@ export default class Dashboard extends NavigationMixin(LightningElement) {
             day: "numeric"
         };
 
+        // this should be moved but I honestly don't know how to do that properly in Salesforce
         let jobApi = "https://jooble.org/api/";
         let jobApiKey = "f1b033ba-59d0-4f64-b46b-802ac1e0c85b";
         let params = {
@@ -179,7 +180,7 @@ export default class Dashboard extends NavigationMixin(LightningElement) {
                         return {
                             ...job,
                             formattedDate: jobDate.toLocaleDateString("en-GB", options),
-                            formattedSalary: job.salary ? new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(job.salary) : 'Not specified'
+                            formattedSalary: job.salary ? new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(job.salary) : 'No salary specified'
                         };
                     });
                     
