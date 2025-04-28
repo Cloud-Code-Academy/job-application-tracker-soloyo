@@ -1,12 +1,15 @@
 public with sharing class TasksNotifications {
     public static void upcomingTasksNotifications() {
         Date tomorrow = Date.today().addDays(1);
-
-        List<Task> tasks = [
-            select Id, Subject, ActivityDate, Description, OwnerId, Owner.Email, Owner.Name, WhatId, What.Name, WhoId, Who.Name 
-            from Task 
-            where ActivityDate = :tomorrow and Status != 'Completed'
-        ];
+        List<Task> tasks = new List<Task>();
+        
+        if (Schema.sObjectType.Task.isAccessible()) {
+            tasks = [
+                select Id, Subject, ActivityDate, Description, OwnerId, Owner.Email, Owner.Name, WhatId, What.Name, WhoId, Who.Name 
+                from Task 
+                where ActivityDate = :tomorrow and Status != 'Completed'
+            ];
+        }
 
         Map<Id, List<Task>> tasksByOwner = new Map<Id, List<Task>>();
         
