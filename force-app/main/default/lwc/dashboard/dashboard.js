@@ -88,12 +88,7 @@ export default class Dashboard extends NavigationMixin(LightningElement) {
                 return {
                     ...interview,
                     formattedDate: startDate.toLocaleDateString("en-GB", options),
-                    formattedStartTime: Intl.DateTimeFormat('en-US', {
-                        hour: '2-digit',
-                        minute: '2-digit',
-                        hour12: true,
-                        timeZone: 'UTC',
-                    }).format(startDate),
+                    formattedStartTime: interview.StartDateTime,
                     formattedEndTime: Intl.DateTimeFormat('en-US', {
                         hour: '2-digit',
                         minute: '2-digit',
@@ -268,7 +263,9 @@ export default class Dashboard extends NavigationMixin(LightningElement) {
                         })
                     );
 
-                    return refreshApex(this.wiredTasksResult);
+                    refreshApex(this.wiredInterviewsResult);
+                    refreshApex(this.wiredApplicationStatsResult);
+                    refreshApex(this.wiredTasksResult);
                 })
                 .catch(error => {
                     console.error('Error completing task:', error);
