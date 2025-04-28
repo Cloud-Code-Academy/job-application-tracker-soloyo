@@ -29,11 +29,12 @@ public with sharing class JobAppHelper {
         
         for (Job_Application__c jobApp : jobApps) {
             Task task = new Task();
+
             task.Subject = 'Job Application Follow up';
             task.Status = 'Not Started';
             task.Priority = 'Normal';
             task.WhatId = jobApp.Id;
-            task.ActivityDate = jobApp.Follow_up_Date__c;
+            task.ActivityDate = jobApp.Follow_up_Date__c == null ? jobApp.Follow_up_Date__c : Date.today().addDays(2);
             task.Description = 'Follow up on job application for ' + jobApp.Position__c + ' at ' + jobApp.Company_Name__c;
             tasksToInsert.add(task);
         }
@@ -55,7 +56,7 @@ public with sharing class JobAppHelper {
         List<Event> eventsToInsert = new List<Event>();
 
         // need to add a check to see if the date/time was added or updated
-        // also needto change the status if it has been done so already
+        // also need to change the status if it has been done so already
         
         for (Job_Application__c jobApp : newJobApps) { 
             if (jobApp.Interview_Date__c != null) {
