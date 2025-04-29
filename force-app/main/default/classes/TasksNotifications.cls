@@ -32,7 +32,7 @@ public with sharing class TasksNotifications {
             
             // create email
             Messaging.SingleEmailMessage mail = new Messaging.SingleEmailMessage();
-            String[] toAddresses = new String[] {ownerEmail};
+            String[] toAddresses = new String[] { ownerEmail };
 
             mail.setToAddresses(toAddresses);
             mail.setSubject('You have ' + ownerTasks.size() + ' task(s) due tomorrow');
@@ -100,7 +100,7 @@ public with sharing class TasksNotifications {
             
             // create email
             Messaging.SingleEmailMessage mail = new Messaging.SingleEmailMessage();
-            String[] toAddresses = new String[] {ownerEmail};
+            String[] toAddresses = new String[] { ownerEmail };
 
             mail.setToAddresses(toAddresses);
             mail.setSubject('URGENT: You have ' + ownerTasks.size() + ' overdue task(s)');
