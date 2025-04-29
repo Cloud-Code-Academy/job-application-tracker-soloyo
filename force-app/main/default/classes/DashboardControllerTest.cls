@@ -69,4 +69,48 @@ private class DashboardControllerTest {
         System.assertEquals(5, recentApps.size(), 'Recent applications count is incorrect.');
         System.assertNotEquals(10, recentApps.size(), 'Total applications count is correct.');
     }
+
+    @isTest
+    static void testGetUpcomingInterviews() {
+        List<Event> testEvents = new List<Event>();
+
+        for (Integer i = 0; i < 5; i++) {
+            testEvents.add(new Event(
+                Subject = 'Interview with Test Company ' + i,
+                StartDateTime = System.now().addDays(i),
+                EndDateTime = System.now().addDays(i).addHours(1),
+                OwnerId = UserInfo.getUserId()
+            ));
+        }
+
+        insert testEvents;
+
+        Test.startTest();
+        List<Event> upcomingInterviews = DashboardController.getUpcomingInterviews();
+        Test.stopTest();
+
+        System.assertEquals(5, upcomingInterviews.size(), 'Upcoming interviews count is incorrect.');
+    }
+
+    @isTest
+    static void testGetNoUpcomingInterviews() {
+        List<Event> testEvents = new List<Event>();
+
+        for (Integer i = 0; i < 5; i++) {
+            testEvents.add(new Event(
+                Subject = 'Interview with Test Company ' + i,
+                StartDateTime = System.now().addDays(-5),
+                EndDateTime = System.now().addDays(-5).addHours(1),
+                OwnerId = UserInfo.getUserId()
+            ));
+        }
+
+        insert testEvents;
+
+        Test.startTest();
+        List<Event> upcomingInterviews = DashboardController.getUpcomingInterviews();
+        Test.stopTest();
+
+        System.assertEquals(0, upcomingInterviews.size(), 'Upcoming interviews count is incorrect.');
+    }
 }
