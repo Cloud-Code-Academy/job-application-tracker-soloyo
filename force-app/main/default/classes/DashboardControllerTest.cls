@@ -154,4 +154,53 @@ private class DashboardControllerTest {
         System.assertEquals(9, pendingTasks.size(), 'Pending tasks count is incorrect.');
         System.assertNotEquals(10, pendingTasks.size(), 'Pending tasks count is incorrect.');
     }
+
+    @isTest
+    static void testGetNoPendingTasks() {
+        List<Task> testTasks = new List<Task>();
+
+        for (Integer i = 0; i < 5; i++) {
+            testTasks.add(new Task(
+                Subject = 'Follow up on application ' + i,
+                ActivityDate = Date.today().addDays(-2),
+                Status = 'Completed',
+                Priority = 'Normal',
+                OwnerId = UserInfo.getUserId()
+            ));
+        }
+
+        insert testTasks;
+
+        Test.startTest();
+        List<Task> pendingTasks = DashboardController.getPendingTasks();
+        Test.stopTest();
+
+        System.assertEquals(0, pendingTasks.size(), 'Pending tasks count is incorrect.');
+    }
+
+    @isTest
+    static void testCompletedTask() {
+        List<Task> testTasks = new List<Task>();
+
+        for (Integer i = 0; i < 5; i++) {
+            testTasks.add(new Task(
+                Subject = 'Follow up on application ' + i,
+                ActivityDate = Date.today().addDays(i + 2),
+                Status = 'Not Started',
+                Priority = 'Normal',
+                OwnerId = UserInfo.getUserId()
+            ));
+        }
+
+        insert testTasks;
+
+        Test.startTest();
+        DashboardController.completedTask(testTasks[0].Id);
+        Test.stopTest();
+
+        Task updatedTask = [SELECT Id, Status FROM Task WHERE Id = :testTasks[0].Id];
+
+        System.assertEquals(5, testTasks.size(), 'Tasks count is incorrect.');
+        System.assertEquals('Completed', updatedTask.Status, 'Task status was not updated correctly.');
+    }
 }
