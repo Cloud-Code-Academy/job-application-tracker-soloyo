@@ -55,7 +55,6 @@ public with sharing class DashboardController {
     @AuraEnabled(cacheable=true)
     public static List<Task> getPendingTasks() {
         List<Task> tasks = new List<Task>();
-        DateTime today = System.now();
         
         try {
             if (Schema.sObjectType.Task.isAccessible()) {

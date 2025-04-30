@@ -113,4 +113,45 @@ private class DashboardControllerTest {
 
         System.assertEquals(0, upcomingInterviews.size(), 'Upcoming interviews count is incorrect.');
     }
+
+    @isTest
+    static void testGetPendingTasks() {
+        List<Task> testTasks = new List<Task>();
+
+        for (Integer i = 0; i < 10; i++) {
+            String taskStatus;
+
+            switch on i {
+                when 0, 4, 6, 7 {
+                    taskStatus = 'Not Started';
+                }	
+                when 1, 2, 9 {
+                    taskStatus = 'In Progress';
+                }
+                when 3 {
+                    taskStatus = 'Completed';
+                }
+                when else {
+                    taskStatus = 'Deferred';
+                }
+            }
+
+            testTasks.add(new Task(
+                Subject = 'Follow up on application ' + i,
+                ActivityDate = Date.today().addDays(i + 2),
+                Status = taskStatus,
+                Priority = 'Normal',
+                OwnerId = UserInfo.getUserId()
+            ));
+        }
+
+        insert testTasks;
+
+        Test.startTest();
+        List<Task> pendingTasks = DashboardController.getPendingTasks();
+        Test.stopTest();
+
+        System.assertEquals(9, pendingTasks.size(), 'Pending tasks count is incorrect.');
+        System.assertNotEquals(10, pendingTasks.size(), 'Pending tasks count is incorrect.');
+    }
 }
