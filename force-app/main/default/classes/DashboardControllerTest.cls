@@ -198,7 +198,7 @@ private class DashboardControllerTest {
         DashboardController.completedTask(testTasks[0].Id);
         Test.stopTest();
 
-        Task updatedTask = [SELECT Id, Status FROM Task WHERE Id = :testTasks[0].Id];
+        Task updatedTask = [select Id, Status from Task where Id = :testTasks[0].Id];
 
         System.assertEquals(5, testTasks.size(), 'Tasks count is incorrect.');
         System.assertEquals('Completed', updatedTask.Status, 'Task status was not updated correctly.');
