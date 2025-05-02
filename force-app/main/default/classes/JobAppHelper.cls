@@ -41,6 +41,7 @@ public with sharing class JobAppHelper {
         for (Job_Application__c jobApp : newJobApps) { 
             if (jobApp.Interview_Date__c != null) {
                 Event event = new Event();
+
                 event.Subject = 'Interview with ' + jobApp.Company_Name__c + ' for ' + jobApp.Position__c;
                 event.StartDateTime = jobApp.Interview_Date__c;
                 event.EndDateTime = jobApp.Interview_Date__c.addHours(1);
@@ -59,6 +60,75 @@ public with sharing class JobAppHelper {
                 }
             } else {
                 System.debug('User does not have permission to create Event records.');
+            }
+        }
+    }
+
+    // update an existing event associated to an existing job application
+    public void updateEvent(List<Job_Application__c> updatedJobApps) {
+        List<Event> eventsToUpdate = new List<Event>();
+        List<Event> existingEvents = new List<Event>();
+        Set<Id> appIds = new Set<Id>();
+        
+        for (Job_Application__c jobApp : updatedJobApps) {
+            appIds.add(jobApp.Id);
+        }
+
+        if (!appIds.isEmpty()) {
+            existingEvents = [select Id, StartDateTime, EndDateTime from Event where WhatId IN :appIds];
+        
+            for (Job_Application__c jobApp : updatedJobApps) {
+                if (jobApp.Interview_Date__c != null) {
+                    for (Event event : existingEvents) {
+                        event.StartDateTime = jobApp.Interview_Date__c;
+                        event.EndDateTime = jobApp.Interview_Date__c.addHours(1);
+                        eventsToUpdate.add(event);
+                    }
+                }
+            }
+        }
+        
+        if (!eventsToUpdate.isEmpty()) {
+            if (Schema.sObjectType.Event.isUpdateable()) {
+                try {
+                    update eventsToUpdate;
+                } catch (Exception e) {
+                    System.debug('Error updating events: ' + e.getMessage());
+                }
+            } else {
+                System.debug('User does not have permission to update Event records.');
+            }
+        }
+    }
+
+    public void deleteEvent(List<Job_Application__c> deletedJobApps) {
+        List<Event> eventsToDelete = new List<Event>();
+        List<Event> existingEvents = new List<Event>();
+        Set<Id> appIds = new Set<Id>();
+
+        for (Job_Application__c jobApp : deletedJobApps) {
+            appIds.add(jobApp.Id);
+        }
+
+        if (!appIds.isEmpty()) {
+            existingEvents = [select Id, StartDateTime, EndDateTime from Event where WhatId IN :appIds];
+        
+            for (Job_Application__c jobApp : deletedJobApps) {
+                for (Event event : existingEvents) {
+                    eventsToDelete.add(event);
+                }
+            }
+        }
+        
+        if (!eventsToDelete.isEmpty()) {
+            if (Schema.sObjectType.Event.isDeletable()) {
+                try {
+                    delete eventsToDelete;
+                } catch (Exception e) {
+                    System.debug('Error deleting events: ' + e.getMessage());
+                }
+            } else {
+                System.debug('User does not have permission to delete Event records.');
             }
         }
     }

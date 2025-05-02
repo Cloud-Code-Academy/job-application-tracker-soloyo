@@ -14,10 +14,8 @@ public with sharing class JobAppTriggerHandler extends TriggerHandler {
     }
 
     public override void afterInsert() {
-        /*
-         * When a job application is inserted, create a task related to the job application
-         */
         jobAppHelper.createTask(newJobApp);
+        jobAppHelper.createEvent(newJobApp);
     }
 
     public override void beforeInsert() {
@@ -25,9 +23,10 @@ public with sharing class JobAppTriggerHandler extends TriggerHandler {
     }
 
     public override void afterUpdate() {
-        /*
-         * When a job application has been updated, create the interview event related to the job application
-         */
-        jobAppHelper.createEvent(newJobApp);
+        jobAppHelper.updateEvent(newJobApp);
+    }
+
+    public override void beforeDelete() {
+        jobAppHelper.deleteEvent(oldJobApp);
     }
 }
