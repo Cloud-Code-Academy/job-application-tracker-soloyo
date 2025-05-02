@@ -6,10 +6,10 @@ public with sharing class DashboardController {
 
         try {
             if (Schema.sObjectType.Job_Application__c.isAccessible()) {
-                stats.put('total', [select COUNT() from Job_Application__c]); // get total count
-                stats.put('applied', [select COUNT() from Job_Application__c where Status__c = 'Applied']); // get total applied count
-                stats.put('interviews', [select COUNT() from Job_Application__c where Status__c = 'Interviewing']); // get count of interviews
-                stats.put('offers', [select COUNT() from Job_Application__c where Status__c = 'Negotiating' or Status__c = 'Accepted']); // get the count of offers
+                stats.put('total', [select COUNT() from Job_Application__c where OwnerId = :UserInfo.getUserId()]); // get total count
+                stats.put('applied', [select COUNT() from Job_Application__c where Status__c = 'Applied' and ownerId = :UserInfo.getUserId()]); // get total applied count
+                stats.put('interviews', [select COUNT() from Job_Application__c where Status__c = 'Interviewing' and ownerId = :UserInfo.getUserId()]); // get count of interviews
+                stats.put('offers', [select COUNT() from Job_Application__c where (Status__c = 'Negotiating' or Status__c = 'Accepted')  and ownerId = :UserInfo.getUserId()]); // get the count of offers
             }  
         } catch (Exception e) {
             throw new AuraHandledException(e.getMessage());
@@ -24,7 +24,7 @@ public with sharing class DashboardController {
 
         try {
             if (Schema.sObjectType.Job_Application__c.isAccessible()) {
-                applications = [select Id, Company_Name__c, Application_Date__c, Position__c, Salary__c, Notes__c from Job_Application__c where Application_Date__c = LAST_N_DAYS:7 and Status__c <> 'Saved' order by Application_Date__c desc limit 5];
+                applications = [select Id, Company_Name__c, Application_Date__c, Position__c, Salary__c, Notes__c from Job_Application__c where Application_Date__c = LAST_N_DAYS:7 and Status__c <> 'Saved' and ownerId = :UserInfo.getUserId() order by Application_Date__c desc limit 5];
             }
         } catch (Exception e) {
             throw new AuraHandledException(e.getMessage());
@@ -43,7 +43,7 @@ public with sharing class DashboardController {
             if (Schema.sObjectType.Event.isAccessible()) {
                 events = [select Id, Subject, StartDateTime, EndDateTime, WhoId 
                             from Event 
-                            where StartDateTime >= :today and StartDateTime <= :nextWeek and Subject like '%Interview%'];
+                            where StartDateTime >= :today and StartDateTime <= :nextWeek and Subject like '%Interview%' and ownerId = :UserInfo.getUserId()];
             }
         } catch (Exception e) {
             throw new AuraHandledException(e.getMessage());
@@ -55,13 +55,12 @@ public with sharing class DashboardController {
     @AuraEnabled(cacheable=true)
     public static List<Task> getPendingTasks() {
         List<Task> tasks = new List<Task>();
-        DateTime today = System.now();
         
         try {
             if (Schema.sObjectType.Task.isAccessible()) {
                 tasks = [select Id, Subject, ActivityDate, Status, Priority, WhatId, WhoId, Description
                             from Task 
-                            where Status != 'Completed'
+                            where Status != 'Completed' and ownerId = :UserInfo.getUserId()
                             order by ActivityDate asc, Priority asc];
             }
         } catch (Exception e) {
