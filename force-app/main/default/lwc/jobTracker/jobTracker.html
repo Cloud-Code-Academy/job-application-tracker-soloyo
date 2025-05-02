@@ -1,0 +1,21 @@
+<template>
+    <lightning-card title="Job Quest" icon-name="standard:opportunity">
+        <div class="slds-var-p-around_medium">
+
+            <!-- navigation -->
+            <lightning-tabset>
+                <lightning-tab label="Dashboard">
+                    <c-dashboard></c-dashboard>
+                </lightning-tab>
+                
+                <lightning-tab label="Jobs List">
+                    <c-jobs-list></c-jobs-list>
+                </lightning-tab>
+                
+                <lightning-tab label="New Application">
+                    <c-new-applications></c-new-applications>
+                </lightning-tab>
+            </lightning-tabset>
+        </div>
+    </lightning-card>
+</template>

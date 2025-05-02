@@ -1,0 +1,29 @@
+<template>
+    <div class="slds-var-p-around_medium">
+        <lightning-card title="Jobs List" icon-name="standard:record">
+            <div class="slds-var-p-around_medium">
+                <template lwc:if={allJobs.length}>
+                    <lightning-datatable
+                        key-field="Id"
+                        data={allJobs}
+                        columns={columns}
+                        onsave={handleSave}
+                        draft-values={draftValues}>
+                    </lightning-datatable>
+                    
+                    <div class="slds-var-p-top_small">
+                        <template lwc:if={allJobs.length}>
+                            Showing {allJobs.length} jobs
+                        </template>
+                        <template lwc:else>
+                            No jobs found. Get started by creating a new application!
+                        </template>
+                    </div>
+                </template>
+                <template lwc:if={loading}>
+                    <lightning-spinner alternative-text="Loading jobs"></lightning-spinner>
+                </template>
+            </div>
+        </lightning-card>
+    </div>
+</template>
