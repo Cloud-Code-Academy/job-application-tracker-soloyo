@@ -35,8 +35,7 @@ private class TaskNotificationsTest {
                 OwnerId = testUser1.Id,
                 Status = 'In Progress'
             );
-            
-            // overdue
+
             Task task3 = new Task(
                 Subject = 'Task 3 Overdue',
                 ActivityDate = Date.today().addDays(-3),
@@ -44,8 +43,7 @@ private class TaskNotificationsTest {
                 OwnerId = testUser1.Id,
                 Status = 'Not Started'
             );
-
-            // completed
+            
             Task task4 = new Task(
                 Subject = 'Task 4 Completed',
                 ActivityDate = Date.today().addDays(1),

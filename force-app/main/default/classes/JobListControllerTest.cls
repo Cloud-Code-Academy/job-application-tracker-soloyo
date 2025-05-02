@@ -48,7 +48,7 @@ private class JobListControllerTest {
     }
 
     @isTest
-    static void testGetAllJobs_DifferentUser() {
+    static void testGetAllJobsDifferentUser() {
         Profile p = [select Id from Profile where Name = 'Standard User'];
         
         User testUser = new User(

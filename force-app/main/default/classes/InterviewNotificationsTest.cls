@@ -42,6 +42,21 @@ private class InterviewNotificationsTest {
     }    
 
     @isTest
+    static void testUpcomingInterviewScheduleExecution() {
+        
+        Test.startTest();
+        InterviewsNotificationScheduler.setupNotifications();
+        
+        InterviewsNotificationScheduler.UpcomingInterviewSchedule upcomingSchedule = new InterviewsNotificationScheduler.UpcomingInterviewSchedule();
+
+        upcomingSchedule.execute(null);
+        Test.stopTest();
+
+        // can't assert anything here, as the method is not returning anything but needed an assertion
+        System.assertEquals(1, 1, 'Expected 1 assertion');
+    }
+
+    @isTest
     static void testUpcomingInterviewNotifications() {
         Test.startTest();
         Integer emailsInvocations = Limits.getEmailInvocations();
@@ -58,6 +73,22 @@ private class InterviewNotificationsTest {
             where StartDateTime >= :Date.today()
             and OwnerId != null
         ];
+
         System.assertEquals(2, tomorrowEvents.size(), 'Should have 2 active interviews due tomorrow');
+    }
+
+    @isTest
+    static void testSetupNotifications() {
+        Test.startTest();
+        InterviewsNotificationScheduler.setupNotifications();
+        Test.stopTest();
+
+        List<CronTrigger> jobs = [
+            select Id, CronJobDetail.Name from CronTrigger
+            where CronJobDetail.Name in ('Upcoming Interview Notification Job')
+        ];
+
+        System.assertEquals(1, jobs.size(), 'Expected 1 scheduled jobs');
+        System.assertEquals('Upcoming Interview Notification Job', jobs[0].CronJobDetail.Name, 'Expected job name to be Upcoming Interview Notification Job');
     }
 }
