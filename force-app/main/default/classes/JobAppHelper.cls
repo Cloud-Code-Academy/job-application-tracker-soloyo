@@ -9,7 +9,7 @@ public with sharing class JobAppHelper {
             task.Status = 'Not Started';
             task.Priority = 'Normal';
             task.WhatId = jobApp.Id;
-            task.ActivityDate = jobApp.Follow_up_Date__c == null ? jobApp.Follow_up_Date__c : Date.today().addDays(2);
+            task.ActivityDate = jobApp.Follow_up_Date__c != null ? jobApp.Follow_up_Date__c : Date.today().addDays(2);
             task.Description = 'Follow up on job application for ' + jobApp.Position__c + ' at ' + jobApp.Company_Name__c;
             tasksToInsert.add(task);
         }
