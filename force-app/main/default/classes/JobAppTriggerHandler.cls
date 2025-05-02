@@ -20,6 +20,10 @@ public with sharing class JobAppTriggerHandler extends TriggerHandler {
         jobAppHelper.createTask(newJobApp);
     }
 
+    public override void beforeInsert() {
+        jobAppHelper.setDefaultStatus(newJobApp);
+    }
+
     public override void afterUpdate() {
         /*
          * When a job application has been updated, create the interview event related to the job application

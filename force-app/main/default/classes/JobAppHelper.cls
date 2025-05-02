@@ -1,28 +1,3 @@
-/*
-JobAppHelper Overview
-
-The 'JobAppHelper' class is designed to provide helper methods that assist in performing specific operations on Job_Application__c records. 
-This class is intended to modularize the logic used in the 'JobAppTrigger' to ensure separation of concerns, improve readability, and ease maintenance. 
-
-Methods:
-- 'createTask()': 
-    - Purpose: Create a follow-up task after a job has been added.
-
-- 'createEvent()': 
-    - Purpose: Copy the shipping address of the Account to its billing address. 
-    - Note: You'll likely need to adjust the method signature to accept the necessary parameters.
-
-- `setRating`: 
-    - Purpose: Evaluate certain conditions on the Account and assign a rating based on that evaluation. You'll need to define the method's 
-      signature and implement its logic.
-
-- `defaultContact`: 
-    - Purpose: Create a default contact related to the Account after the Account is inserted. You'll need to define the method's signature and 
-      implement its logic.
-
-Remember:
-Always ensure that your helper methods are bulk-safe to handle multiple records efficiently. 
-*/
 public with sharing class JobAppHelper {
     public void createTask(List<Job_Application__c> jobApps) {
         List<Task> tasksToInsert = new List<Task>();
@@ -52,11 +27,16 @@ public with sharing class JobAppHelper {
         }
     }
 
+    public void setDefaultStatus(List<Job_Application__c> jobApps) {
+        for (Job_Application__c jobApp : jobApps) {
+            if (jobApp.Status__c == null) {
+                jobApp.Status__c = 'Saved';
+            }
+        }
+    }
+
     public void createEvent(List<Job_Application__c> newJobApps) {
         List<Event> eventsToInsert = new List<Event>();
-
-        // need to add a check to see if the date/time was added or updated
-        // also need to change the status if it has been done so already
         
         for (Job_Application__c jobApp : newJobApps) { 
             if (jobApp.Interview_Date__c != null) {
